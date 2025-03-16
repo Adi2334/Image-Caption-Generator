@@ -1,0 +1,13 @@
+bert_score==0.3.13
+keras==2.10.0
+matplotlib==3.10.1
+nltk==3.9.1
+numpy==1.23.0
+Pillow==11.1.0
+pycocoevalcap==1.2
+rouge_score==0.1.2
+sacrebleu==2.5.1
+streamlit==1.42.0
+tensorflow==2.10.0
+torch==2.0.1+cu117
+tqdm==4.67.1
