@@ -7,11 +7,12 @@ from tensorflow.keras.applications.xception import Xception  # type: ignore
 from tensorflow.keras.models import load_model  # type: ignore
 from tensorflow.keras.preprocessing.sequence import pad_sequences  # type: ignore
 from pickle import load
+from utils import data_loader as DL
 import warnings
 
 @st.cache_resource
-def load_Model():
-    model = load_model("models/best_model.h5")
+def load_Model(weight_path):
+    model = load_model(weight_path)
     return model
 
 # Function to extract features from an image using a CNN model
@@ -60,9 +61,16 @@ def generate_desc(model, tokenizer, photo, max_length):
     return " ".join(in_text.split()[1:-1])
 
 st.title("Image Caption Generator")
-model = load_Model()
+model = load_Model('weigths/models_3/best_model.h5')
 tokenizer = load(open("tokenizer.p", "rb"))
 xception_model = Xception(include_top=False, pooling="avg")
+
+# dataset_text = "/home/adi/img_cap_gen/Data/Flickr8k_text"
+# train_filename = os.path.join(dataset_text, "Flickr_8k.trainImages.txt")
+# train_imgs = DL.load_photos(train_filename)
+# train_descriptions = DL.load_clean_descriptions("data/descriptions.txt", train_imgs)
+# tokenizer = DL.create_tokenizer(train_descriptions)
+# max_length = DL.max_length(train_descriptions)
 max_length = 35
 
 uploaded_file = st.file_uploader("Upload an Image", type=["jpg", "png", "jpeg"])
