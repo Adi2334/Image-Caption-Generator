@@ -3,7 +3,7 @@ import torch
 from pickle import load
 import numpy as np
 from keras.preprocessing.text import Tokenizer
-from utils import data_loader as DL
+import data_loader as DL
 from keras.utils import to_categorical
 import pdb
 from tensorflow.keras.preprocessing.sequence import pad_sequences  # type: ignore
@@ -16,19 +16,15 @@ def data_generator_batch(descriptions, features, tokenizer, max_length, vocab_si
         for key, description_list in descriptions.items():
             feature = features[key][0]
             inp_image, inp_seq, op_word = create_sequences(tokenizer, max_length, description_list, feature, vocab_size)
-            # pdb.set_trace()
-            # Accumulate batch
             for i in range(len(inp_image)):
                 inp_image_batch.append(inp_image[i])
                 inp_seq_batch.append(inp_seq[i])
                 op_word_batch.append(op_word[i])
                 
-                # Yield when batch is ready
                 if len(inp_image_batch) == batch_size:
                     yield [[np.array(inp_image_batch), np.array(inp_seq_batch)], np.array(op_word_batch)]
                     inp_image_batch, inp_seq_batch, op_word_batch = [], [], []
 
-        # Yield remaining batch if not empty
         if len(inp_image_batch) > 0:
             yield [[np.array(inp_image_batch), np.array(inp_seq_batch)], np.array(op_word_batch)]
 
@@ -41,19 +37,15 @@ def data_generator_batch_aug1(descriptions, features, tokenizer, max_length, voc
             feature = features[key]
             # pdb.set_trace()
             inp_image, inp_seq, op_word = create_sequences_aug(tokenizer, max_length, description_list, feature, vocab_size)
-            # pdb.set_trace()
-            # Accumulate batch
             for i in range(len(inp_image)):
                 inp_image_batch.append(inp_image[i])
                 inp_seq_batch.append(inp_seq[i])
                 op_word_batch.append(op_word[i])
                 
-                # Yield when batch is ready
                 if len(inp_image_batch) == batch_size:
                     yield [[np.array(inp_image_batch), np.array(inp_seq_batch)], np.array(op_word_batch)]
                     inp_image_batch, inp_seq_batch, op_word_batch = [], [], []
 
-        # Yield remaining batch if not empty
         if len(inp_image_batch) > 0:
             yield [[np.array(inp_image_batch), np.array(inp_seq_batch)], np.array(op_word_batch)]
 
@@ -68,13 +60,11 @@ def data_generator_batch_aug(descriptions, features, tokenizer, max_length, voca
             # pdb.set_trace()
             inp_image, inp_seq, op_word = create_sequences(tokenizer, max_length, description_list, feature, vocab_size)
             # pdb.set_trace()
-            # Accumulate batch
             for i in range(len(inp_image)):
                 inp_image_batch.append(inp_image[i])
                 inp_seq_batch.append(inp_seq[i])
                 op_word_batch.append(op_word[i])
                 
-                # Yield when batch is ready
                 if len(inp_image_batch) == batch_size:
                     yield [[np.array(inp_image_batch), np.array(inp_seq_batch)], np.array(op_word_batch)]
                     inp_image_batch, inp_seq_batch, op_word_batch = [], [], []
@@ -84,13 +74,11 @@ def data_generator_batch_aug(descriptions, features, tokenizer, max_length, voca
             # pdb.set_trace()
             inp_image, inp_seq, op_word = create_sequences(tokenizer, max_length, description_list, feature, vocab_size)
             # pdb.set_trace()
-            # Accumulate batch
             for i in range(len(inp_image)):
                 inp_image_batch.append(inp_image[i])
                 inp_seq_batch.append(inp_seq[i])
                 op_word_batch.append(op_word[i])
                 
-                # Yield when batch is ready
                 if len(inp_image_batch) == batch_size:
                     yield [[np.array(inp_image_batch), np.array(inp_seq_batch)], np.array(op_word_batch)]
                     inp_image_batch, inp_seq_batch, op_word_batch = [], [], []
@@ -99,36 +87,6 @@ def data_generator_batch_aug(descriptions, features, tokenizer, max_length, voca
         if len(inp_image_batch) > 0:
             yield [[np.array(inp_image_batch), np.array(inp_seq_batch)], np.array(op_word_batch)]
             
-'''def data_generator_batch(descriptions, features, tokenizer, max_length, vocab_size, batch_size=32):
-    """Generator function to yield batches of image features, input sequences, and target words."""
-    
-    # Convert dictionary to a list of (image_id, caption) pairs
-    image_caption_pairs = []
-    for key, description_list in descriptions.items():
-        for desc in description_list:
-            image_caption_pairs.append((key, desc))
-
-    # Shuffle the dataset for better training
-    np.random.shuffle(image_caption_pairs)
-    
-    while True:
-        x_1, x_2, y = [], [], []  # To store batch data
-        for i, (key, desc) in enumerate(image_caption_pairs):
-            feature = features[key]
-            in_image, in_seq, out_word = create_sequences(tokenizer, max_length, desc, feature, vocab_size)
-            
-            x_1.append(in_image)
-            x_2.append(in_seq)
-            y.append(out_word)
-            
-            # Yield the batch when full
-            if len(x_1) == batch_size:
-                yield [[np.array(x_1), np.array(x_2)], np.array(y)]
-                x_1, x_2, y = [], [], []  # Reset batch lists
-        
-        # Yield the last batch if it contains data
-        if len(x_1) > 0:
-            yield [[np.array(x_1), np.array(x_2)], np.array(y)]'''
 
 def data_generator(descriptions, features, tokenizer, max_length, vocab_size):
     """Generator function to yield image features, input sequences, and target words."""
@@ -162,7 +120,7 @@ def create_sequences_aug(tokenizer, max_length, desc_list, feature_list, vocab_s
     """Converts descriptions into input-output sequence pairs, supporting both original and flipped image features."""
     x_1, x_2, y = [], [], []
 
-    for feature in feature_list:  # Loop over both original and flipped features
+    for feature in feature_list:  
         # pdb.set_trace()
         for desc in desc_list:
             seq = tokenizer.texts_to_sequences([desc])[0]
@@ -181,7 +139,6 @@ def create_sequences_aug(tokenizer, max_length, desc_list, feature_list, vocab_s
 
 
 def load_dataset(dataset_text_path, descriptions_file, features_file, data_files):
-    """Loads training images, descriptions, and extracted features."""
     filename = os.path.join(dataset_text_path, data_files)
     
     data_imgs = DL.load_photos(filename)
@@ -199,8 +156,8 @@ if __name__ == "__main__":
     dataset_text = "/home/adi/img_cap_gen/Data/Flickr8k_text"
     train_files = "Flickr_8k.trainImages.txt"
     descriptions_file = "descriptions.txt"
-    features_aug_file = "features_aug.p"
-    features_file = "features.p"
+    features_aug_file = "data/features_aug.p"
+    features_file = "data/features.p"
 
     train_imgs, train_descriptions, train_features, tokenizer, vocab_size, max_len = load_dataset(dataset_text, descriptions_file, features_file, train_files)
 

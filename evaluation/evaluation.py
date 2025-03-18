@@ -2,6 +2,8 @@ import nltk
 import numpy as np
 import pickle
 import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from utils import data_loader as DL
 from nltk.translate.bleu_score import corpus_bleu, SmoothingFunction
 from rouge_score import rouge_scorer
@@ -9,18 +11,13 @@ from bert_score import score as bert_score
 from sacrebleu.metrics import BLEU
 from pycocoevalcap.cider.cider import Cider
 from pycocoevalcap.spice.spice import Spice
+import pdb
+
 
 nltk.download('wordnet')
 
 def evaluate_metrics(pred_captions, true_captions):
-    """
-    Evaluate image captioning model using BLEU, METEOR, ROUGE, CIDEr, SPICE, and BERTScore.
 
-    :param pred_captions: Dict {image_id: predicted caption}
-    :param true_captions: Dict {image_id: [list of reference captions]}
-    """
-
-    # Convert to list format
     references = [true_captions[img] for img in pred_captions.keys()]
     hypotheses = [pred_captions[img] for img in pred_captions.keys()]
 
@@ -53,7 +50,7 @@ def evaluate_metrics(pred_captions, true_captions):
                                           {i: [hyp] for i, hyp in enumerate(hypotheses)})
 
     # BERTScore
-    P, R, F1 = bert_score(hypotheses, [refs[0] for refs in references], lang="en", rescale_with_baseline=True)
+    # P, R, F1 = bert_score(hypotheses, [refs[0] for refs in references], lang="en", rescale_with_baseline=True)
 
     print("Evaluation Results:")
     print(f"BLEU-1: {bleu1:.4f}")
@@ -64,31 +61,19 @@ def evaluate_metrics(pred_captions, true_captions):
     print(f"ROUGE-L: {rouge_l:.4f}")
     print(f"CIDEr: {cider:.4f}")
     print(f"SPICE: {spice:.4f}")
-    print(f"BERTScore F1: {np.mean(F1):.4f}")
+    # print(f"BERTScore F1: {np.mean(F1):.4f}")
 
     return {
         "BLEU-1": bleu1, "BLEU-2": bleu2, "BLEU-3": bleu3, "BLEU-4": bleu4,
-        "METEOR": meteor, "ROUGE-L": rouge_l, "CIDEr": cider, "SPICE": spice,
-        "BERTScore-F1": np.mean(F1)
+        "METEOR": meteor, "ROUGE-L": rouge_l, "CIDEr": cider, "SPICE": spice
     }
 
-'''
-# Example Usage
-true_captions = {
-    "img1.jpg": ["a cat sitting on a table", "a cat is on a wooden table"],
-    "img2.jpg": ["a man riding a bicycle", "a person is biking on the road"]
-}
 
-pred_captions = {
-    "img1.jpg": "a cat sitting on the table",
-    "img2.jpg": "a person riding a bike"
-}
-'''
 if __name__ == '__main__':
 
     dataset_text = "/home/adi/img_cap_gen/Data/Flickr8k_text"
-    features_file = "features_aug.p"
-
+    features_file = "data/features_aug.p"
+    pdb.set_trace()
     # Load test data
     test_filename = os.path.join(dataset_text, "Flickr_8k.testImages.txt")
     test_imgs = DL.load_photos(test_filename)

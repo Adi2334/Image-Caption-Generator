@@ -5,70 +5,65 @@ from keras.models import Model
 from keras.layers import Input, Dense, LSTM, Embedding, Dropout, add, BatchNormalization
 from keras.layers import Embedding, LSTM, add, Concatenate, Reshape, concatenate, Bidirectional
 from keras.utils import plot_model
-from utils import data_loader as DL
+import data_loader as DL
 from keras.regularizers import l2
 
 def model_1(vocab_size, max_length):
-    """Define the image captioning model with Batch Normalization."""
     
     # Image feature extractor
     inputs1 = Input(shape=(2048,),dtype=tf.float32)
     fe1 = Dropout(0.5)(inputs1)
     fe2 = Dense(256, activation='relu')(fe1)
-    fe3 = BatchNormalization()(fe2)  # Add BN after Dense layer
+    fe3 = BatchNormalization()(fe2)  
 
     # Sequence processor
     inputs2 = Input(shape=(max_length,),dtype=tf.int32)
     se1 = Embedding(vocab_size, 256, mask_zero=True)(inputs2)
     se2 = Dropout(0.5)(se1)
     se3 = LSTM(256)(se2)
-    se4 = BatchNormalization()(se3)  # Add BN after LSTM
+    se4 = BatchNormalization()(se3) 
 
     # Merging both models
     decoder1 = add([fe3, se4])
     decoder2 = Dense(256, activation='relu')(decoder1)
-    decoder3 = BatchNormalization()(decoder2)  # BN before final output layer
+    decoder3 = BatchNormalization()(decoder2) 
     outputs = Dense(vocab_size, activation='softmax')(decoder3)
 
-    # Define model
     model = Model(inputs=[inputs1, inputs2], outputs=outputs)
     return model
 
 def model_2(vocab_size, max_length):
-    """Define the image captioning model with Batch Normalization."""
     
     # Image feature extractor
     inputs1 = Input(shape=(2048,),dtype=tf.float32)
     fe1 = Dropout(0.5)(inputs1)
     fe2 = Dense(256, activation='relu')(fe1)
-    fe3 = BatchNormalization()(fe2)  # Add BN after Dense layer
+    fe3 = BatchNormalization()(fe2)  
 
     # Sequence processor
     inputs2 = Input(shape=(max_length,),dtype=tf.int32)
     se1 = Embedding(vocab_size, 256, mask_zero=True)(inputs2)
     se2 = Dropout(0.5)(se1)
     se3 = LSTM(256)(se2)
-    se4 = BatchNormalization()(se3)  # Add BN after LSTM
+    se4 = BatchNormalization()(se3)  
 
     # Merging both models
     decoder1 = add([fe3, se4])
     decoder2 = Dense(256, activation='relu')(decoder1)
-    decoder3 = BatchNormalization()(decoder2)  # BN before final output layer
+    decoder3 = BatchNormalization()(decoder2) 
     decoder4 = Dropout(0.5)(decoder3)
     outputs = Dense(vocab_size, activation='softmax')(decoder4)
 
-    # Define model
     model = Model(inputs=[inputs1, inputs2], outputs=outputs)
     return model
 
 def model_3(vocab_size, max_length):
-    """Define the image captioning model with Batch Normalization."""
     
     # Image feature extractor
     inputs1 = Input(shape=(2048,),dtype=tf.float32)
     fe1 = Dropout(0.5)(inputs1)
     fe2 = Dense(256, activation='relu')(fe1)
-    fe3 = BatchNormalization()(fe2)  # Add BN after Dense layer
+    fe3 = BatchNormalization()(fe2) 
 
     # Sequence processor
     inputs2 = Input(shape=(max_length,),dtype=tf.int32)
@@ -79,16 +74,15 @@ def model_3(vocab_size, max_length):
     merg1 = add([fe3, se2])
     mix1 = BatchNormalization()(merg1)
     mix2 = LSTM(256)(mix1)
-    mix3 = BatchNormalization()(mix2)  # Add BN after LSTM
+    mix3 = BatchNormalization()(mix2) 
 
     # Merging CNN output and LSTM output
     decoder1 = add([fe3, mix3])
     decoder2 = Dense(256, activation='relu')(decoder1)
-    decoder3 = BatchNormalization()(decoder2)  # BN before final output layer
+    decoder3 = BatchNormalization()(decoder2)  
     decoder4 = Dropout(0.5)(decoder3)
     outputs = Dense(vocab_size, activation='softmax')(decoder4)
 
-    # Define model
     model = Model(inputs=[inputs1, inputs2], outputs=outputs)
     return model
 
@@ -116,18 +110,17 @@ if __name__ == "__main__":
     
     dataset_text = "/home/adi/img_cap_gen/Data/Flickr8k_text"
     filename = os.path.join(dataset_text, "Flickr_8k.trainImages.txt")
-    features_file = 'features.p'
+    features_file = 'data/features_aug.p'
     train_imgs = DL.load_photos(filename)
     train_descriptions = DL.load_clean_descriptions("descriptions.txt", train_imgs)
     train_features = DL.load_features(train_imgs,features_file)
     tokenizer = DL.create_tokenizer(train_descriptions)
     vocab_size = len(tokenizer.word_index) + 1  # Add 1 for padding token
-    max_len = DL.max_length(train_descriptions)  # Compute max length from training descriptions
-    l2_lambda=0.01
-
-    model = model_2(vocab_size, max_len)
+    max_len = DL.max_length(train_descriptions)  
+    # max_len = 35
+    # vocab_size = 7320
+    model = model_3(vocab_size, max_len)
     model.compile(loss='categorical_crossentropy', optimizer='adam')
 
-    # Summary & plot
     print(model.summary())
-    plot_model(model, to_file='model_1.png', show_shapes=True)
+    plot_model(model, to_file='model_3.png', show_shapes=True)

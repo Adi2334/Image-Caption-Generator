@@ -4,8 +4,6 @@ import os
 import string
 from pickle import dump, load
 import pdb
-# As there is problem with the version of CUDA used by tf and that present in system torch is needed 
-# even if it is not used as it will handle it (MIRACLE MIRACLE ....)
 import torch
 from tqdm import tqdm
 import warnings
@@ -13,8 +11,6 @@ warnings.filterwarnings('ignore')
 tqdm.pandas()
 
 
-
-# File load
 def load_fp(filename):
     with open(filename, 'r') as file:
         text = file.read()
@@ -57,21 +53,16 @@ def save_descriptions(descriptions, filename):
     with open(filename, "w") as file:
         file.write("\n".join(lines))
 
-# Set dataset paths
 dataset_text = "/home/adi/img_cap_gen/Data/Flickr8k_text"
 
-# Load descriptions from text file
 filename = os.path.join(dataset_text, "Flickr8k.token.txt")
 descriptions = img_capt(filename)
 print("Length of descriptions =", len(descriptions))
 
-# Clean the descriptions
 clean_descriptions = txt_clean(descriptions)
 pdb.set_trace()
 
-# Build vocabulary
 vocabulary = txt_vocab(clean_descriptions)
 print("Length of vocabulary =", len(vocabulary))
 
-# Save cleaned descriptions
-save_descriptions(clean_descriptions, "descriptions.txt")
+save_descriptions(clean_descriptions, "data/descriptions.txt")

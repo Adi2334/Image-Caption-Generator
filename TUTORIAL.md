@@ -1,4 +1,4 @@
-# This is the tutorial for **Image Caption Generator using Deep Learning**  
+<!-- # This is the tutorial for **Image Caption Generator using Deep Learning**  
 
 ### These are the major steps that were followed to create this model/project
 1. Dataset collection
@@ -27,4 +27,4 @@ To improve model performance, images were **horizontally flipped**.
 ## **5. Model evaluation**
 
 ## **6. Model deployment**
-
+ -->
