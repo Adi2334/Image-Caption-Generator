@@ -20,7 +20,7 @@ The model consists of three main components:
    - Combines image features and text sequences.  
    - Generates the next word in the caption.  
 
-![model-image](/code/model_3.png)
+![model-image](./model_3.png)
 To view the model architecture in detail you may use [Netron](https://netron.app/) by uploading saved model.
 
 <!-- ## **Training Details**  
@@ -87,7 +87,7 @@ python evaluation/evaluation.py
 ## **Results**  
 Example output from the model:  
 
-| **Input Image** |  ![example-image](/code/OIP3.jpg) |
+| **Input Image** |  ![example-image](./OIP3.jpg) |
 |---------------|-------------------|
 |**Generated Caption** | *"man in the water"* |
 
