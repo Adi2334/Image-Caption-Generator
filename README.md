@@ -94,8 +94,6 @@ Example output from the model:
 ## **Future Improvements**  
 🔹 Train on a larger dataset for improved generalization.  
 🔹 Experiment with **Transformer-based models** (e.g., ViT + GPT-2, BLIP).  
-🔹 Implement **beam search** for better caption generation.  
-🔹 Optimize the model using **reinforcement learning (CIDEr optimization)**.  
 
 ## **Contributor**  
 👤 **[Aditya Nikam](https://www.linkedin.com/in/aditya-nikam-4885bb232/)** student at IIT Kanpur
